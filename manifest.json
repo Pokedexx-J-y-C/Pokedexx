@@ -1,0 +1,19 @@
+{
+  "name": "Pokédex - Primera Generación",
+  "short_name": "Pokédex",
+  "description": "Descubre y captura los Pokémon del 001 al 151 usando códigos QR.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090914",
+  "theme_color": "#090914",
+  "icons": [
+    {
+      "src": "icons/pokedex.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+      }
+  ]
+}

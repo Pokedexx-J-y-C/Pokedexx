@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#090914">
+    <title>Pokédex | Pokémon 001–151</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/pokedex.svg" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { background: #090914; color: #f8fafc; }
+        .tarjeta { background: linear-gradient(145deg,#151526,#10101b); border: 1px solid #28283d; }
+        .neon { text-shadow: 0 0 12px rgba(168,85,247,.45); }
+        .boton-neon { background: linear-gradient(90deg,#7c3aed,#2563eb); }
+        .pokemon-silueta { filter: brightness(0); opacity: .65; }
+        .nav-activo { color: #c084fc; border-color: #a855f7; }
+        .tipo { display:inline-block; padding:.25rem .7rem; border-radius:999px; font-size:.75rem; background:#3b1767; color:#e9d5ff; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- TOAST -->
+    <div id="toast" class="hidden fixed top-5 left-1/2 -translate-x-1/2 z-[100] bg-purple-900 border border-purple-500 text-white px-5 py-3 rounded-xl shadow-lg text-center max-w-[90%]"></div>
+
+
+    <!-- ENCABEZADO -->
+    <header class="text-center px-4 pt-8 pb-5">
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-purple-300 neon">⚡ Pokédex</h1>
+        <p class="text-gray-400 mt-2">Tu colección de Pokémon de la primera generación</p>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto px-4 pb-28">
+        <!-- VISTA POKEDEX -->
+        <section id="inicio" class="vista">
+            <div class="tarjeta rounded-2xl p-4 mb-5">
+                <label for="buscador" class="block text-sm text-gray-300 mb-2">Buscar Pokémon</label>
+                <input id="buscador" type="search" placeholder="Nombre o número..." class="w-full rounded-xl bg-gray-900 border border-gray-700 px-4 py-3 text-white outline-none focus:border-purple-500">
+            </div>
+
+            <div class="tarjeta rounded-2xl p-4 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="font-bold text-purple-200">Mi colección</p>
+                    <p id="contador-panel" class="text-sm text-gray-300">0 / 151</p>
+                </div>
+                <div class="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+                    <div id="barra-panel" class="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all" style="width:0%"></div>
+                </div>
+            </div>
+
+
+            <!-- LISTA DE POKEMON -->
+            <div id="lista-pokemon" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
+        </section>
+
+
+        <!-- ESCANER QR -->
+        <section id="scanner" class="vista hidden">
+            <div class="tarjeta rounded-2xl p-5 text-center">
+                <h2 class="text-2xl font-bold text-purple-300 mb-2">📷 Escanear Pokémon</h2>
+                <p class="text-gray-400 mb-4">Apunta la cámara a un código QR con formato pokemon:ID.</p>
+                <div id="qr-reader" class="mx-auto w-full max-w-sm overflow-hidden rounded-xl"></div>
+                <button id="btn-escanear" class="boton-neon w-full max-w-sm rounded-xl px-5 py-3 font-bold mt-4">Iniciar escáner</button>
+                <button id="btn-detener-escaner" class="hidden w-full max-w-sm rounded-xl px-5 py-3 font-bold mt-2 border border-gray-600 text-gray-300">Detener cámara</button>
+            </div>
+
+
+            <!-- VISTA PREVIA -->
+            <div id="pokemon-preview" class="hidden tarjeta rounded-2xl p-5 text-center mt-5">
+                <p id="pokemon-numero" class="text-purple-300 text-sm"></p>
+                <img id="pokemon-imagen" src="" alt="Pokémon" class="w-36 h-36 object-contain mx-auto">
+                <h3 id="pokemon-nombre" class="text-2xl font-bold capitalize mt-2"></h3>
+                <div id="pokemon-tipos" class="flex flex-wrap justify-center gap-2 mt-3"></div>
+                <div id="pokemon-habilidades" class="flex flex-wrap justify-center gap-2 mt-3"></div>
+                <p class="text-gray-300 mt-3">Altura: <span id="pokemon-altura"></span></p>
+                <p class="text-gray-300">Peso: <span id="pokemon-peso"></span></p>
+                <button id="btn-confirmar" class="boton-neon w-full rounded-xl px-5 py-3 font-bold mt-5">⭐ Capturar Pokémon</button>
+            </div>
+        </section>
+
+
+        <!-- PROGRESO -->
+        <section id="progreso" class="vista hidden">
+            <div class="tarjeta rounded-2xl p-6">
+                <h2 class="text-2xl font-bold text-purple-300 text-center mb-6">📊 Mi progreso</h2>
+                <div class="text-center mb-5">
+                    <p id="contador-progreso" class="text-4xl font-extrabold text-white">0 / 151</p>
+                    <p class="text-gray-400 mt-1">Pokémon capturados</p>
+                </div>
+                <div class="w-full h-4 bg-gray-800 rounded-full overflow-hidden mb-3">
+                    <div id="barra-progreso" class="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full transition-all" style="width:0%"></div>
+                </div>
+                <p id="porcentaje-progreso" class="text-center text-purple-300 font-bold">0%</p>
+                <p id="pokemon-restantes" class="text-center text-gray-400 mt-3">Te faltan 151 Pokémon.</p>
+            </div>
+        </section>
+
+
+        <!-- ACERCA DE -->
+        <section id="acerca" class="vista hidden">
+            <div class="tarjeta rounded-2xl p-6">
+                <h2 class="text-2xl font-bold text-purple-300 text-center mb-4">ℹ️ Acerca de</h2>
+                <p class="text-gray-300 text-center">Pokédex web para descubrir y coleccionar los 151 Pokémon de la primera generación mediante códigos QR.</p>
+                <div class="mt-5 space-y-2 text-gray-400 text-sm">
+                    <p>🌐 Información consultada mediante PokéAPI.</p>
+                    <p>💾 Colección guardada en este dispositivo.</p>
+                    <p>📷 Capturas mediante códigos QR.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- BOTON FLOTANTE -->
+    <button id="btn-ir-scanner" class="fixed right-5 bottom-24 z-40 w-16 h-16 rounded-full boton-neon shadow-lg text-2xl font-bold" aria-label="Escanear código QR">📷</button>
+
+
+    <!-- NAVEGACION INFERIOR -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#10101b] border-t border-gray-800">
+        <div class="max-w-xl mx-auto grid grid-cols-3">
+            <button data-vista="inicio" class="nav-btn nav-activo py-3 border-t-2 border-transparent text-center text-sm">🏠<br>Pokédex</button>
+            <button data-vista="progreso" class="nav-btn py-3 border-t-2 border-transparent text-center text-sm text-gray-400">📊<br>Progreso</button>
+            <button data-vista="acerca" class="nav-btn py-3 border-t-2 border-transparent text-center text-sm text-gray-400">ℹ️<br>Acerca de</button>
+        </div>
+    </nav>
+
+
+    <!-- MODAL DE DETALLES -->
+    <div id="modal-pokemon" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="tarjeta rounded-2xl p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto text-center">
+            <button id="cerrar-modal" class="text-gray-400 text-2xl float-right" aria-label="Cerrar">✕</button>
+            <p id="detalle-numero" class="text-purple-300 mt-3"></p>
+            <img id="detalle-imagen" src="" alt="Pokémon" class="w-40 h-40 mx-auto object-contain">
+            <h2 id="detalle-nombre" class="text-2xl font-bold capitalize"></h2>
+            <div id="detalle-tipos" class="flex flex-wrap justify-center gap-2 mt-3"></div>
+            <h3 class="text-purple-300 font-bold mt-5">Habilidades</h3>
+            <div id="detalle-habilidades" class="flex flex-wrap justify-center gap-2 mt-2"></div>
+            <div class="grid grid-cols-2 gap-3 mt-5">
+                <div class="bg-gray-900 rounded-xl p-3"><p class="text-gray-400 text-sm">Altura</p><p id="detalle-altura" class="font-bold"></p></div>
+                <div class="bg-gray-900 rounded-xl p-3"><p class="text-gray-400 text-sm">Peso</p><p id="detalle-peso" class="font-bold"></p></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="app.js"></script>
+</body>
+</html>
