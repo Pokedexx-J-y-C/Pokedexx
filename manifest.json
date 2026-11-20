@@ -1,6 +1,6 @@
 {
-  "name": "Pokédex - Primera Generación",
-  "short_name": "Pokédex",
+  "name": "Pokédexx - Primera Generación",
+  "short_name": "Pokédexx",
   "description": "Descubre y captura los Pokémon del 001 al 151 usando códigos QR.",
   "start_url": "./index.html",
   "scope": "./",
