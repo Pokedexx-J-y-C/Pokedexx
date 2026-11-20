@@ -13,6 +13,7 @@
         body { background: #090914; color: #f8fafc; }
         .tarjeta { background: linear-gradient(145deg,#151526,#10101b); border: 1px solid #28283d; }
         .neon { text-shadow: 0 0 12px rgba(168,85,247,.45); }
+        .icono-neon { filter: drop-shadow(0 0 6px rgba(192, 132, 252, 0.85)); }
         .boton-neon { background: linear-gradient(90deg,#7c3aed,#2563eb); }
         .pokemon-silueta { filter: brightness(0); opacity: .65; }
         .nav-activo { color: #c084fc; border-color: #a855f7; }
@@ -26,7 +27,15 @@
 
     <!-- ENCABEZADO -->
     <header class="text-center px-4 pt-8 pb-5">
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-purple-300 neon">⚡ Pokédex</h1>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-purple-300 neon flex items-center justify-center gap-3">
+            <svg class="w-9 h-9 icono-neon shrink-0" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 32C8 18.745 18.745 8 32 8C45.255 8 56 18.745 56 32H41C41 27.029 36.971 23 32 23C27.029 23 23 27.029 23 32H8Z" fill="#7C3AED" stroke="#C084FC" stroke-width="3"/>
+                <path d="M56 32C56 45.255 45.255 56 32 56C18.745 56 8 45.255 8 32H23C23 36.971 27.029 41 32 41C36.971 41 41 36.971 41 32H56Z" fill="#151526" stroke="#38BDF8" stroke-width="3"/>
+                <circle cx="32" cy="32" r="7" fill="#090914" stroke="#E879F9" stroke-width="3"/>
+                <circle cx="32" cy="32" r="3" fill="#38BDF8"/>
+            </svg>
+            <span>Pokédex</span>
+        </h1>
         <p class="text-gray-400 mt-2">Tu colección de Pokémon de la primera generación</p>
     </header>
 
@@ -58,7 +67,13 @@
         <!-- ESCANER QR -->
         <section id="scanner" class="vista hidden">
             <div class="tarjeta rounded-2xl p-5 text-center">
-                <h2 class="text-2xl font-bold text-purple-300 mb-2">📷 Escanear Pokémon</h2>
+                <h2 class="text-2xl font-bold text-purple-300 neon flex items-center justify-center gap-2 mb-2">
+                    <svg class="w-7 h-7 icono-neon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span>Escanear Pokémon</span>
+                </h2>
                 <p class="text-gray-400 mb-4">Apunta la cámara a un código QR con formato pokemon:ID.</p>
                 <div id="qr-reader" class="mx-auto w-full max-w-sm overflow-hidden rounded-xl"></div>
                 <button id="btn-escanear" class="boton-neon w-full max-w-sm rounded-xl px-5 py-3 font-bold mt-4">Iniciar escáner</button>
@@ -83,7 +98,13 @@
         <!-- PROGRESO -->
         <section id="progreso" class="vista hidden">
             <div class="tarjeta rounded-2xl p-6">
-                <h2 class="text-2xl font-bold text-purple-300 text-center mb-6">📊 Mi progreso</h2>
+                <h2 class="text-2xl font-bold text-purple-300 neon flex items-center justify-center gap-2 mb-6">
+                    <svg class="w-6 h-6 icono-neon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" fill-opacity="0.25"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    <span>Mi progreso</span>
+                </h2>
                 <div class="text-center mb-5">
                     <p id="contador-progreso" class="text-4xl font-extrabold text-white">0 / 151</p>
                     <p class="text-gray-400 mt-1">Pokémon capturados</p>
@@ -100,7 +121,14 @@
         <!-- ACERCA DE -->
         <section id="acerca" class="vista hidden">
             <div class="tarjeta rounded-2xl p-6">
-                <h2 class="text-2xl font-bold text-purple-300 text-center mb-4">ℹ️ Acerca de</h2>
+                <h2 class="text-2xl font-bold text-purple-300 neon flex items-center justify-center gap-2 mb-4">
+                    <svg class="w-6 h-6 icono-neon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="3" fill="currentColor" fill-opacity="0.2"/>
+                        <line x1="12" y1="11" x2="12" y2="16"/>
+                        <circle cx="12" cy="8" r="1" fill="currentColor"/>
+                    </svg>
+                    <span>Acerca de</span>
+                </h2>
                 <p class="text-gray-300 text-center">Pokédex web para descubrir y coleccionar los 151 Pokémon de la primera generación mediante códigos QR.</p>
                 <div class="mt-5 space-y-2 text-gray-400 text-sm">
                     <p>🌐 Información consultada mediante PokéAPI.</p>
@@ -113,15 +141,46 @@
 
 
     <!-- BOTON FLOTANTE -->
-    <button id="btn-ir-scanner" class="fixed right-5 bottom-24 z-40 w-16 h-16 rounded-full boton-neon shadow-lg text-2xl font-bold" aria-label="Escanear código QR">📷</button>
+    <button id="btn-ir-scanner" class="fixed right-5 bottom-24 z-40 w-16 h-16 rounded-full boton-neon shadow-lg shadow-purple-900/50 flex items-center justify-center text-white active:scale-95 transition" aria-label="Escanear código QR">
+        <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+        </svg>
+    </button>
 
 
     <!-- NAVEGACION INFERIOR -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#10101b] border-t border-gray-800">
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#10101b]/95 backdrop-blur-md border-t border-purple-900/50">
         <div class="max-w-xl mx-auto grid grid-cols-3">
-            <button data-vista="inicio" class="nav-btn nav-activo py-3 border-t-2 border-transparent text-center text-sm">🏠<br>Pokédex</button>
-            <button data-vista="progreso" class="nav-btn py-3 border-t-2 border-transparent text-center text-sm text-gray-400">📊<br>Progreso</button>
-            <button data-vista="acerca" class="nav-btn py-3 border-t-2 border-transparent text-center text-sm text-gray-400">ℹ️<br>Acerca de</button>
+            <!-- POKÉDEX (POKEBOLA NEÓN) -->
+            <button data-vista="inicio" class="nav-btn nav-activo py-2.5 border-t-2 border-transparent flex flex-col items-center justify-center gap-1 text-xs font-semibold transition">
+                <svg class="w-6 h-6 icono-neon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 32C10 19.85 19.85 10 32 10C44.15 10 54 19.85 54 32H40C40 27.58 36.42 24 32 24C27.58 24 24 27.58 24 32H10Z" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="3.5"/>
+                    <path d="M54 32C54 44.15 44.15 54 32 54C19.85 54 10 44.15 10 32H24C24 36.42 27.58 40 32 40C36.42 40 40 36.42 40 32H54Z" stroke="currentColor" stroke-width="3.5"/>
+                    <circle cx="32" cy="32" r="5" fill="#090914" stroke="currentColor" stroke-width="3"/>
+                </svg>
+                <span>Pokédex</span>
+            </button>
+
+            <!-- PROGRESO (MEDALLA / ESTRELLA NEÓN) -->
+            <button data-vista="progreso" class="nav-btn py-2.5 border-t-2 border-transparent flex flex-col items-center justify-center gap-1 text-xs font-semibold text-gray-400 transition">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor" fill-opacity="0.18"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+                <span>Progreso</span>
+            </button>
+
+            <!-- ACERCA DE (CHIP / TERMINAL POKÉDEX) -->
+            <button data-vista="acerca" class="nav-btn py-2.5 border-t-2 border-transparent flex flex-col items-center justify-center gap-1 text-xs font-semibold text-gray-400 transition">
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="4" width="16" height="16" rx="3" fill="currentColor" fill-opacity="0.15"/>
+                    <circle cx="9" cy="9" r="1.5" fill="currentColor"/>
+                    <line x1="12" y1="12" x2="12" y2="16"/>
+                    <line x1="12" y1="9" x2="12.01" y2="9"/>
+                </svg>
+                <span>Acerca de</span>
+            </button>
         </div>
     </nav>
 
