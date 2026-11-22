@@ -118,9 +118,6 @@ pokedex/
 ├── assets/
 │   └── qr/
 │       └── pokemon-001.png ... pokemon-151.png
-├── docs/
-│   ├── especificaciones_proyecto_final_pok_dex_pwa.md
-│   └── PLAN-MEJORAS.md
 └── README.md
 ```
 
