@@ -4,6 +4,8 @@
 - Carolina Islas Iturriaga
 - Jorge Cervantes Valdez
 
+**Aplicación publicada:** https://pokedexx-j-y-c.github.io/Pokedexx/
+
 ---
 
 ## Descripción del proyecto
@@ -42,17 +44,44 @@ Al escanear un código QR válido, la aplicación obtiene la información del Po
 - Notificaciones Toast para retroalimentación al usuario.
 - Navegación entre las vistas de **Pokédex**, **Progreso** y **Acerca de**.
 - Instalación como aplicación mediante PWA y funcionamiento offline de la interfaz.
+- Estados de interfaz: vacío, carga, error y contenido.
+- Recuperación segura ante datos corruptos en `localStorage`.
+- Reapertura automática del escáner tras un QR inválido o un Pokémon duplicado.
+- Verificación de duplicados y de rango antes de consultar PokéAPI.
+- Botón de instalación en **Acerca de** y aviso de conexión offline.
+- Interfaz accesible: navegación por teclado, foco visible y regiones `aria-live`.
+- Caché offline del shell, Tailwind, `html5-qrcode`, imágenes y datos de PokéAPI ya consultados.
 
 ---
 
 ## Cómo ejecutar la aplicación
 
-1. Descargar o clonar el repositorio.
-2. Abrir la carpeta del proyecto en **Visual Studio Code**.
-3. Instalar y utilizar la extensión **Live Server**.
-4. Abrir el archivo `index.html`, hacer clic derecho y seleccionar **Open with Live Server** (o abrir el enlace desplegado en **GitHub Pages**).
+El Service Worker y la cámara requieren `localhost` o HTTPS; abrir `index.html` directamente con `file://` deshabilita la PWA y el escáner.
 
-> **Nota:** Se recomienda ejecutar la aplicación mediante Live Server o un servidor HTTPS (como GitHub Pages) para permitir el acceso a la cámara y el registro del Service Worker de la PWA.
+1. Clonar el repositorio.
+2. Servir la carpeta con un servidor local:
+   - `python -m http.server 8000`
+   - o `npx serve .`
+   - o la extensión **Live Server** de Visual Studio Code.
+3. Abrir `http://localhost:8000`.
+
+> **Nota:** Para probar la cámara y la instalación en un teléfono se requiere HTTPS. La opción más simple es publicar el proyecto en **GitHub Pages**.
+
+### Publicación en GitHub Pages
+
+1. En el repositorio, entrar a **Settings → Pages**.
+2. En **Source**, elegir **Deploy from a branch**, rama `main` y carpeta `/ (root)`.
+3. Guardar y abrir la URL HTTPS publicada.
+
+> La colección de `localStorage` pertenece a cada origen: no se comparte entre `localhost` y GitHub Pages.
+
+---
+
+## Instalación de la PWA
+
+- **Android / Chrome / Edge:** pulsar el botón **Instalar aplicación** en *Acerca de* o usar el menú del navegador → **Instalar aplicación**.
+- **iPhone / iPad (Safari):** botón **Compartir** → **Añadir a pantalla de inicio**.
+- La aplicación se abre en modo `standalone`, sin la barra del navegador.
 
 ---
 
@@ -67,26 +96,55 @@ Se utilizó **`html5-qrcode`**, una librería de JavaScript que permite acceder 
 Se utiliza **PokéAPI** para obtener información de los Pokémon de la primera generación:
 
 ```text
-[https://pokeapi.co/api/v2/pokemon/](https://pokeapi.co/api/v2/pokemon/){id}
+https://pokeapi.co/api/v2/pokemon/{id}
+```
 
+---
+
+## Estructura del proyecto
+
+```text
+pokedex/
+├── index.html
+├── app.js
+├── service_worker.js
+├── manifest.json
+├── icons/
+│   ├── icon-192.png
+│   ├── icon-512.png
+│   ├── maskable-512.png
+│   ├── apple-touch-icon-180.png
+│   └── pokedex.svg
+├── assets/
+│   └── qr/
+│       └── pokemon-001.png ... pokemon-151.png
+├── docs/
+│   ├── especificaciones_proyecto_final_pok_dex_pwa.md
+│   └── PLAN-MEJORAS.md
+└── README.md
+```
+
+---
 
 ## Códigos QR de Prueba
 
-Escanea cualquiera de los siguientes códigos QR desde la aplicación para probar la captura de los Pokémon obligatorios:
+Los códigos obligatorios están incluidos como imágenes PNG en `assets/qr/` y no dependen de servicios externos:
 
 | #001 Bulbasaur (`pokemon:1`) | #004 Charmander (`pokemon:4`) | #007 Squirtle (`pokemon:7`) | #025 Pikachu (`pokemon:25`) | #039 Jigglypuff (`pokemon:39`) |
 | :---: | :---: | :---: | :---: | :---: |
-| ![QR Bulbasaur](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:1) | ![QR Charmander](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:4) | ![QR Squirtle](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:7) | ![QR Pikachu](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:25) | ![QR Jigglypuff](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:39) |
+| ![QR Bulbasaur](assets/qr/pokemon-001.png) | ![QR Charmander](assets/qr/pokemon-004.png) | ![QR Squirtle](assets/qr/pokemon-007.png) | ![QR Pikachu](assets/qr/pokemon-025.png) | ![QR Jigglypuff](assets/qr/pokemon-039.png) |
 
 | #052 Meowth (`pokemon:52`) | #094 Gengar (`pokemon:94`) | #133 Eevee (`pokemon:133`) | #150 Mewtwo (`pokemon:150`) | #151 Mew (`pokemon:151`) |
 | :---: | :---: | :---: | :---: | :---: |
-| ![QR Meowth](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:52) | ![QR Gengar](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:94) | ![QR Eevee](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:133) | ![QR Mewtwo](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:150) | ![QR Mew](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=pokemon:151) |
+| ![QR Meowth](assets/qr/pokemon-052.png) | ![QR Gengar](assets/qr/pokemon-094.png) | ![QR Eevee](assets/qr/pokemon-133.png) | ![QR Mewtwo](assets/qr/pokemon-150.png) | ![QR Mew](assets/qr/pokemon-151.png) |
 
 
 
 ## Códigos QR - Pokédex Completa (001 al 151)
 
-Escanea cualquiera de los 151 códigos QR desde la aplicación para registrar al Pokémon en tu colección:
+Escanea cualquiera de los 151 códigos QR desde la aplicación para registrar al Pokémon en tu colección.
+
+> Las imágenes de esta sección se generan con un servicio externo (`api.qrserver.com`). El paquete obligatorio, sin dependencia de red, está en `assets/qr/`.
 
 | #001 Bulbasaur (`pokemon:1`) | #002 Ivysaur (`pokemon:2`) | #003 Venusaur (`pokemon:3`) | #004 Charmander (`pokemon:4`) | #005 Charmeleon (`pokemon:5`) |
 | :---: | :---: | :---: | :---: | :---: |

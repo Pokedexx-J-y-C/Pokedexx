@@ -4,11 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#090914">
+    <meta name="description" content="Pokédexx PWA para descubrir y capturar los 151 Pokémon de la primera generación con códigos QR.">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pokédexx">
     <title>Pokédexx | Pokémon 001–151</title>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/pokedex.svg" type="image/svg+xml">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         body { background: #090914; color: #f8fafc; }
         .tarjeta { background: linear-gradient(145deg,#151526,#10101b); border: 1px solid #28283d; }
@@ -18,15 +23,32 @@
         .pokemon-silueta { filter: brightness(0); opacity: .65; }
         .nav-activo { color: #c084fc; border-color: #a855f7; }
         .tipo { display:inline-block; padding:.25rem .7rem; border-radius:999px; font-size:.75rem; background:#3b1767; color:#e9d5ff; }
+        .toast-exito { background:#064e3b; border-color:#34d399; color:#ecfdf5; }
+        .toast-error { background:#7f1d1d; border-color:#f87171; color:#fef2f2; }
+        .toast-aviso { background:#78350f; border-color:#fbbf24; color:#fffbeb; }
+        .toast-info { background:#1e3a8a; border-color:#60a5fa; color:#eff6ff; }
+        :focus-visible { outline: 2px solid #c084fc; outline-offset: 2px; }
+        .nav-safe { padding-bottom: env(safe-area-inset-bottom); }
+        .fab-safe { bottom: calc(6rem + env(safe-area-inset-bottom)); }
+        .header-safe { padding-top: calc(2rem + env(safe-area-inset-top)); }
+        .spinner { border:3px solid #3b1767; border-top-color:#c084fc; border-radius:9999px; animation:girar 1s linear infinite; }
+        @keyframes girar { to { transform: rotate(360deg); } }
+        section[id] { scroll-margin-top: 1rem; }
+        @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
     </style>
 </head>
 <body class="min-h-screen">
+    <!-- AVISO OFFLINE -->
+    <div id="banner-offline" class="hidden fixed top-0 inset-x-0 z-[110] bg-red-900/95 border-b border-red-500 text-red-50 text-center text-sm px-4 py-2" role="status" aria-live="polite">
+        Sin conexión: puedes consultar tu colección guardada.
+    </div>
+
     <!-- TOAST -->
-    <div id="toast" class="hidden fixed top-5 left-1/2 -translate-x-1/2 z-[100] bg-purple-900 border border-purple-500 text-white px-5 py-3 rounded-xl shadow-lg text-center max-w-[90%]"></div>
+    <div id="toast" class="hidden fixed top-16 left-1/2 -translate-x-1/2 z-[100] border px-5 py-3 rounded-xl shadow-lg text-center max-w-[90%]" role="status" aria-live="polite" aria-atomic="true"></div>
 
 
     <!-- ENCABEZADO -->
-    <header class="text-center px-4 pt-8 pb-5">
+    <header class="text-center px-4 header-safe pb-5">
         <h1 class="text-3xl sm:text-4xl font-extrabold text-purple-300 neon flex items-center justify-center gap-3">
             <svg class="w-9 h-9 icono-neon shrink-0" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M8 32C8 18.745 18.745 8 32 8C45.255 8 56 18.745 56 32H41C41 27.029 36.971 23 32 23C27.029 23 23 27.029 23 32H8Z" fill="#7C3AED" stroke="#C084FC" stroke-width="3"/>
@@ -59,8 +81,18 @@
             </div>
 
 
+            <div id="estado-vacio" class="hidden tarjeta rounded-2xl p-6 mb-6 text-center">
+                <p class="text-4xl mb-2">📭</p>
+                <h3 class="text-lg font-bold text-purple-200">Tu Pokédex está vacía</h3>
+                <p class="text-gray-400 text-sm mt-2">Escanea tu primer código QR para comenzar tu aventura.</p>
+                <button id="btn-vacio-escanear" class="boton-neon w-full rounded-xl px-5 py-3 font-bold mt-4">📷 Escanear mi primer Pokémon</button>
+            </div>
+
+
             <!-- LISTA DE POKEMON -->
             <div id="lista-pokemon" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3"></div>
+
+            <p id="sin-resultados" class="hidden text-center text-gray-400 py-6">No se encontraron Pokémon con ese número o nombre.</p>
         </section>
 
 
@@ -78,19 +110,33 @@
                 <div id="qr-reader" class="mx-auto w-full max-w-sm overflow-hidden rounded-xl"></div>
                 <button id="btn-escanear" class="boton-neon w-full max-w-sm rounded-xl px-5 py-3 font-bold mt-4">Iniciar escáner</button>
                 <button id="btn-detener-escaner" class="hidden w-full max-w-sm rounded-xl px-5 py-3 font-bold mt-2 border border-gray-600 text-gray-300">Detener cámara</button>
+                <p id="scanner-estado" class="hidden mt-3 text-sm text-purple-300" role="status" aria-live="polite"></p>
             </div>
 
 
             <!-- VISTA PREVIA -->
-            <div id="pokemon-preview" class="hidden tarjeta rounded-2xl p-5 text-center mt-5">
-                <p id="pokemon-numero" class="text-purple-300 text-sm"></p>
-                <img id="pokemon-imagen" src="" alt="Pokémon" class="w-36 h-36 object-contain mx-auto">
-                <h3 id="pokemon-nombre" class="text-2xl font-bold capitalize mt-2"></h3>
-                <div id="pokemon-tipos" class="flex flex-wrap justify-center gap-2 mt-3"></div>
-                <div id="pokemon-habilidades" class="flex flex-wrap justify-center gap-2 mt-3"></div>
-                <p class="text-gray-300 mt-3">Altura: <span id="pokemon-altura"></span></p>
-                <p class="text-gray-300">Peso: <span id="pokemon-peso"></span></p>
-                <button id="btn-confirmar" class="boton-neon w-full rounded-xl px-5 py-3 font-bold mt-5">⭐ Capturar Pokémon</button>
+            <div id="pokemon-preview" class="hidden tarjeta rounded-2xl p-5 text-center mt-5" aria-live="polite">
+                <div id="pokemon-loading" class="hidden py-8">
+                    <div class="spinner w-10 h-10 mx-auto mb-3"></div>
+                    <p class="text-gray-400">Consultando Pokédex...</p>
+                </div>
+
+                <div id="pokemon-error" class="hidden py-6">
+                    <p class="text-4xl mb-2">📡</p>
+                    <p class="text-gray-300">No fue posible consultar la información del Pokémon.</p>
+                    <button id="btn-reintentar" class="mt-4 rounded-xl px-4 py-3 border border-purple-500 text-purple-200 font-bold">Reintentar</button>
+                </div>
+
+                <div id="pokemon-contenido" class="hidden">
+                    <p id="pokemon-numero" class="text-purple-300 text-sm"></p>
+                    <img id="pokemon-imagen" src="" alt="Pokémon" class="w-36 h-36 object-contain mx-auto">
+                    <h3 id="pokemon-nombre" class="text-2xl font-bold capitalize mt-2"></h3>
+                    <div id="pokemon-tipos" class="flex flex-wrap justify-center gap-2 mt-3"></div>
+                    <div id="pokemon-habilidades" class="flex flex-wrap justify-center gap-2 mt-3"></div>
+                    <p class="text-gray-300 mt-3">Altura: <span id="pokemon-altura"></span></p>
+                    <p class="text-gray-300">Peso: <span id="pokemon-peso"></span></p>
+                    <button id="btn-confirmar" disabled class="boton-neon w-full rounded-xl px-5 py-3 font-bold mt-5 disabled:opacity-50 disabled:cursor-not-allowed">⭐ Capturar Pokémon</button>
+                </div>
             </div>
         </section>
 
@@ -134,6 +180,16 @@
                     <p>🌐 Información consultada mediante PokéAPI.</p>
                     <p>💾 Colección guardada en este dispositivo.</p>
                     <p>📷 Capturas mediante códigos QR.</p>
+                    <p>📱 Instalable como aplicación y disponible sin conexión.</p>
+                </div>
+
+                <button id="btn-instalar" class="hidden boton-neon w-full rounded-xl px-5 py-3 font-bold mt-5">⬇️ Instalar aplicación</button>
+                <p id="instalar-ayuda" class="hidden text-gray-400 text-sm mt-4">En iPhone o iPad: Compartir → Añadir a pantalla de inicio.</p>
+                <p id="app-instalada" class="hidden text-emerald-300 text-sm mt-4">Ya estás usando la aplicación instalada.</p>
+
+                <div class="border-t border-gray-700 mt-5 pt-4 text-gray-500 text-xs space-y-1">
+                    <p>Versión 1.1</p>
+                    <p>Primera generación · 151 Pokémon</p>
                 </div>
             </div>
         </section>
@@ -141,7 +197,7 @@
 
 
     <!-- BOTON FLOTANTE -->
-    <button id="btn-ir-scanner" class="fixed right-5 bottom-24 z-40 w-16 h-16 rounded-full boton-neon shadow-lg shadow-purple-900/50 flex items-center justify-center text-white active:scale-95 transition" aria-label="Escanear código QR">
+    <button id="btn-ir-scanner" class="fixed right-5 fab-safe z-40 w-16 h-16 rounded-full boton-neon shadow-lg shadow-purple-900/50 flex items-center justify-center text-white active:scale-95 transition" aria-label="Escanear código QR">
         <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
             <circle cx="12" cy="13" r="4"/>
@@ -150,7 +206,7 @@
 
 
     <!-- NAVEGACION INFERIOR -->
-    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#10101b]/95 backdrop-blur-md border-t border-purple-900/50">
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-[#10101b]/95 backdrop-blur-md border-t border-purple-900/50 nav-safe">
         <div class="max-w-xl mx-auto grid grid-cols-3">
             <!-- POKÉDEX (POKEBOLA NEÓN) -->
             <button data-vista="inicio" class="nav-btn nav-activo py-2.5 border-t-2 border-transparent flex flex-col items-center justify-center gap-1 text-xs font-semibold transition">
@@ -186,8 +242,8 @@
 
 
     <!-- MODAL DE DETALLES -->
-    <div id="modal-pokemon" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-        <div class="tarjeta rounded-2xl p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto text-center">
+    <div id="modal-pokemon" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="detalle-nombre">
+        <div id="modal-panel" class="tarjeta rounded-2xl p-5 w-full max-w-sm max-h-[90vh] overflow-y-auto text-center" tabindex="-1">
             <button id="cerrar-modal" class="text-gray-400 text-2xl float-right" aria-label="Cerrar">✕</button>
             <p id="detalle-numero" class="text-purple-300 mt-3"></p>
             <img id="detalle-imagen" src="" alt="Pokémon" class="w-40 h-40 mx-auto object-contain">
