@@ -4,6 +4,8 @@
 - Carolina Islas Iturriaga
 - Jorge Cervantes Valdez
 
+**Aplicación publicada:** https://pokedexx-j-y-c.github.io/Pokedexx/
+
 ---
 
 ## Descripción del proyecto
