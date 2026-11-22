@@ -2,6 +2,26 @@
 
 Documento de trabajo para retomar el proyecto en cualquier sesión o equipo.
 
+## Estado de la implementación
+
+- Repositorio reubicado en `C:\Users\Usuario\Documents\ESCUELA\Pokedex`.
+- `main` y el tag `v1.0-entrega-anterior` conservan la versión previa (commit `0c7405a`).
+- Fases 1 a 8 implementadas en la rama `feature/pwa-mejoras`.
+- Fecha de implementación: 2026-11-21.
+
+### Resumen de cambios
+
+- `service_worker.js` reemplazado por `service-worker.js` con precache del shell y del CDN
+  fijado, caché de PokéAPI, imágenes y códigos QR.
+- `manifest.json` completo, con iconos PNG (`any` y `maskable`) y `apple-touch-icon`.
+- `index.html` con metadatos PWA, banner offline, estado vacío, estados de carga y error,
+  modal accesible y botón de instalación.
+- `app.js` organizado por funciones: almacenamiento seguro, API con timeout y caché,
+  renderizado accesible de 151 tarjetas, progreso unificado, escáner con reanudación,
+  toasts tipados e instalación.
+- `assets/qr/` con los 10 códigos obligatorios, verificados con un decodificador.
+- README actualizado; `docs/` conserva las especificaciones y este plan.
+
 ## Contexto
 
 - Repositorio: `https://github.com/carolinaislase-ui/Pokedexx`
@@ -96,6 +116,16 @@ Matriz manual mínima:
 - Recarga de la aplicación conservando la colección.
 - Instalación como PWA y apertura offline del shell.
 - Consola sin errores.
+
+### Resultados automatizados (2026-11-21)
+
+- Navegador headless: 151 tarjetas renderizadas, estado vacío visible con 0 capturados.
+- Colección de prueba con duplicado y fuera de rango: normalizada a 1 Pokémon (`1 / 151`, `0.7%`).
+- `localStorage` corrupto: la aplicación carga sin errores y muestra el estado vacío.
+- Modo offline: shell, estilos y colección se muestran correctamente.
+- Service Worker registrado y caché `pokedexx-v4-shell` creada.
+- 10 códigos QR locales decodificados correctamente con `jsqr`.
+- Consola sin errores en todos los escenarios.
 
 ## Notas
 
