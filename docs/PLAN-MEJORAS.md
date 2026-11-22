@@ -11,8 +11,8 @@ Documento de trabajo para retomar el proyecto en cualquier sesión o equipo.
 
 ### Resumen de cambios
 
-- `service_worker.js` reemplazado por `service-worker.js` con precache del shell y del CDN
-  fijado, caché de PokéAPI, imágenes y códigos QR.
+- `service_worker.js` reescrito con precache del shell y del CDN fijado, caché de PokéAPI,
+  imágenes y códigos QR (se conserva el nombre para actualizar instalaciones existentes).
 - `manifest.json` completo, con iconos PNG (`any` y `maskable`) y `apple-touch-icon`.
 - `index.html` con metadatos PWA, banner offline, estado vacío, estados de carga y error,
   modal accesible y botón de instalación.
@@ -24,7 +24,8 @@ Documento de trabajo para retomar el proyecto en cualquier sesión o equipo.
 
 ## Contexto
 
-- Repositorio: `https://github.com/carolinaislase-ui/Pokedexx`
+- Repositorio: `https://github.com/Pokedexx-J-y-C/Pokedexx`
+- Aplicación publicada: `https://pokedexx-j-y-c.github.io/Pokedexx/`
 - Rama de trabajo: `feature/pwa-mejoras`
 - Respaldo de la versión anterior: tag `v1.0-entrega-anterior`
 - Especificaciones: `docs/especificaciones_proyecto_final_pok_dex_pwa.md`

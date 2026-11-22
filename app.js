@@ -700,7 +700,7 @@ document.addEventListener("DOMContentLoaded", function() {
             return;
         }
         window.addEventListener("load", function() {
-            navigator.serviceWorker.register("service-worker.js").catch(function(error) {
+            navigator.serviceWorker.register("service_worker.js").catch(function(error) {
                 console.warn("No se pudo registrar el Service Worker:", error);
             });
         });

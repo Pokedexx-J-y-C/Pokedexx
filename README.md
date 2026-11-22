@@ -22,7 +22,7 @@ Al escanear un código QR válido, la aplicación obtiene la información del Po
 - **PokéAPI** (`https://pokeapi.co/api/v2/pokemon/{id}`)
 - **HTML5-QRCode (`html5-qrcode`)**
 - **LocalStorage**
-- **Progressive Web App (PWA)** (`manifest.json` + `service-worker.js`)
+- **Progressive Web App (PWA)** (`manifest.json` + `service_worker.js`)
 
 ---
 
@@ -105,7 +105,7 @@ https://pokeapi.co/api/v2/pokemon/{id}
 pokedex/
 ├── index.html
 ├── app.js
-├── service-worker.js
+├── service_worker.js
 ├── manifest.json
 ├── icons/
 │   ├── icon-192.png
