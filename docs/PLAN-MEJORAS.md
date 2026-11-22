@@ -5,8 +5,9 @@ Documento de trabajo para retomar el proyecto en cualquier sesión o equipo.
 ## Estado de la implementación
 
 - Repositorio reubicado en `C:\Users\Usuario\Documents\ESCUELA\Pokedex`.
-- `main` y el tag `v1.0-entrega-anterior` conservan la versión previa (commit `0c7405a`).
-- Fases 1 a 8 implementadas en la rama `feature/pwa-mejoras`.
+- El tag `v1.0-entrega-anterior` conserva la versión previa (commit `0c7405a`).
+- Fases 1 a 8 implementadas en la rama `feature/pwa-mejoras` y fusionadas en `main` mediante el PR #1.
+- Aplicación publicada desde `main`: `https://pokedexx-j-y-c.github.io/Pokedexx/`.
 - Fecha de implementación: 2026-11-21.
 
 ### Resumen de cambios
